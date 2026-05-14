@@ -1,0 +1,1524 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Skydive Leipzig – AFF Ausbildung Lernplattform</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --sky-top: #0a1628;
+  --sky-mid: #0f2847;
+  --sky-light: #1a4a7a;
+  --accent: #00c8ff;
+  --accent-glow: rgba(0,200,255,0.3);
+  --accent-warm: #ff6b35;
+  --surface: rgba(255,255,255,0.04);
+  --surface-hover: rgba(255,255,255,0.08);
+  --surface-active: rgba(0,200,255,0.08);
+  --text: #e8edf5;
+  --text-dim: #8a9bb5;
+  --text-muted: #5a6a80;
+  --border: rgba(255,255,255,0.08);
+  --green: #00e676;
+  --red: #ff5252;
+  --yellow: #ffd740;
+  --radius: 12px;
+  --radius-sm: 8px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background: var(--sky-top);
+  color: var(--text);
+  line-height: 1.65;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+/* ─── SCROLLBAR ─── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--sky-light); border-radius: 3px; }
+
+/* ─── BACKGROUND ─── */
+.bg-atmosphere {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background: 
+    radial-gradient(ellipse 80% 60% at 20% 10%, rgba(0,200,255,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 80% at 80% 90%, rgba(255,107,53,0.04) 0%, transparent 60%),
+    linear-gradient(175deg, var(--sky-top) 0%, var(--sky-mid) 40%, #0d1f3a 100%);
+}
+
+/* ─── HERO ─── */
+.hero {
+  position: relative; z-index: 1;
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center;
+  padding: 2rem;
+}
+
+.hero::before {
+  content: '';
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: 200px;
+  background: linear-gradient(to top, var(--sky-top), transparent);
+  z-index: 1;
+}
+
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 6px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  font-size: 0.8rem;
+  color: var(--accent);
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 2rem;
+  animation: fadeDown 0.8s ease;
+}
+
+.hero-badge .dot {
+  width: 6px; height: 6px;
+  background: var(--accent);
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.hero h1 {
+  font-size: clamp(2.5rem, 7vw, 5rem);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin-bottom: 1rem;
+  animation: fadeDown 0.8s ease 0.1s both;
+}
+
+.hero h1 .gradient {
+  background: linear-gradient(135deg, var(--accent), #6dd5fa, var(--accent-warm));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero p {
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  color: var(--text-dim);
+  max-width: 600px;
+  margin-bottom: 2.5rem;
+  animation: fadeDown 0.8s ease 0.2s both;
+}
+
+.hero-cta {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 14px 32px;
+  background: linear-gradient(135deg, var(--accent), #0090cc);
+  color: #fff;
+  font-family: 'Outfit', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 100px;
+  cursor: pointer;
+  transition: all 0.3s;
+  animation: fadeDown 0.8s ease 0.3s both;
+  text-decoration: none;
+  box-shadow: 0 4px 30px rgba(0,200,255,0.3);
+}
+.hero-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 40px rgba(0,200,255,0.4);
+}
+
+.hero-stats {
+  display: flex; gap: 3rem;
+  margin-top: 3rem;
+  animation: fadeDown 0.8s ease 0.4s both;
+}
+.hero-stats .stat { text-align: center; }
+.hero-stats .stat-num {
+  font-size: 1.8rem; font-weight: 800;
+  font-family: 'Space Mono', monospace;
+  color: var(--accent);
+}
+.hero-stats .stat-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+@keyframes fadeDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── LAYOUT ─── */
+.app {
+  position: relative; z-index: 1;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 1.5rem 4rem;
+}
+
+/* ─── NAV ─── */
+.nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(10,22,40,0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  margin: 0 -1.5rem;
+  padding: 0 1.5rem;
+}
+
+.nav-inner {
+  display: flex; align-items: center; gap: 1rem;
+  padding: 12px 0;
+  overflow-x: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.nav-inner::-webkit-scrollbar { display: none; }
+
+.nav-btn {
+  flex-shrink: 0;
+  padding: 8px 16px;
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-dim);
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 500;
+  border-radius: 100px;
+  cursor: pointer;
+  transition: all 0.25s;
+  white-space: nowrap;
+}
+.nav-btn:hover { color: var(--text); background: var(--surface); }
+.nav-btn.active {
+  color: var(--accent);
+  background: var(--surface-active);
+  border-color: rgba(0,200,255,0.2);
+}
+
+/* ─── SECTIONS ─── */
+.section {
+  display: none;
+  animation: sectionIn 0.4s ease;
+}
+.section.active { display: block; }
+
+@keyframes sectionIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.section-header {
+  padding: 3rem 0 2rem;
+}
+
+.section-header .overline {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+  margin-bottom: 0.5rem;
+}
+
+.section-header h2 {
+  font-size: clamp(1.8rem, 4vw, 2.5rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.5rem;
+}
+
+.section-header p {
+  color: var(--text-dim);
+  font-size: 1.05rem;
+  max-width: 650px;
+}
+
+/* ─── CARDS ─── */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  transition: all 0.3s;
+  cursor: default;
+}
+.card:hover {
+  background: var(--surface-hover);
+  border-color: rgba(255,255,255,0.12);
+  transform: translateY(-2px);
+}
+
+.card .card-icon {
+  width: 42px; height: 42px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--surface-active);
+  border-radius: 10px;
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+}
+
+.card h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.card p {
+  font-size: 0.9rem;
+  color: var(--text-dim);
+  line-height: 1.6;
+}
+
+/* ─── INFO BLOCKS ─── */
+.info-block {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+.info-block h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  display: flex; align-items: center; gap: 10px;
+}
+
+.info-block h3 .emoji { font-size: 1.4rem; }
+
+.info-block ul {
+  list-style: none;
+  padding: 0;
+}
+.info-block ul li {
+  position: relative;
+  padding: 0.4rem 0 0.4rem 1.5rem;
+  color: var(--text-dim);
+  font-size: 0.95rem;
+}
+.info-block ul li::before {
+  content: '▸';
+  position: absolute; left: 0;
+  color: var(--accent);
+  font-weight: bold;
+}
+
+/* ─── HIGHLIGHT BOX ─── */
+.highlight {
+  background: linear-gradient(135deg, rgba(0,200,255,0.08), rgba(0,200,255,0.02));
+  border: 1px solid rgba(0,200,255,0.15);
+  border-radius: var(--radius);
+  padding: 1.5rem 2rem;
+  margin: 1.5rem 0;
+}
+.highlight.warning {
+  background: linear-gradient(135deg, rgba(255,82,82,0.08), rgba(255,82,82,0.02));
+  border-color: rgba(255,82,82,0.2);
+}
+.highlight.warning .highlight-title { color: var(--red); }
+.highlight.success {
+  background: linear-gradient(135deg, rgba(0,230,118,0.08), rgba(0,230,118,0.02));
+  border-color: rgba(0,230,118,0.2);
+}
+.highlight.success .highlight-title { color: var(--green); }
+
+.highlight-title {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--accent);
+  margin-bottom: 0.5rem;
+  display: flex; align-items: center; gap: 8px;
+}
+
+.highlight p, .highlight ul {
+  font-size: 0.9rem;
+  color: var(--text-dim);
+}
+.highlight ul { list-style: none; padding: 0; }
+.highlight ul li { padding: 0.25rem 0 0.25rem 1.2rem; position: relative; }
+.highlight ul li::before { content: '→'; position: absolute; left: 0; color: var(--accent); }
+.highlight.warning ul li::before { color: var(--red); }
+
+/* ─── TABLE ─── */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+  font-size: 0.9rem;
+}
+.data-table th {
+  text-align: left;
+  padding: 12px 16px;
+  background: var(--surface-active);
+  color: var(--accent);
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-bottom: 1px solid var(--border);
+}
+.data-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-dim);
+}
+.data-table tr:hover td {
+  background: var(--surface);
+  color: var(--text);
+}
+
+/* ─── STEPS / PROCEDURE ─── */
+.step-list {
+  counter-reset: step;
+  padding: 0;
+  list-style: none;
+}
+.step-list li {
+  counter-increment: step;
+  position: relative;
+  padding: 1.2rem 1.5rem 1.2rem 4.5rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  margin-bottom: 0.75rem;
+  font-size: 0.95rem;
+  color: var(--text-dim);
+  transition: all 0.25s;
+}
+.step-list li:hover {
+  background: var(--surface-hover);
+  border-color: rgba(0,200,255,0.15);
+  color: var(--text);
+}
+.step-list li::before {
+  content: counter(step);
+  position: absolute;
+  left: 1.2rem; top: 50%; transform: translateY(-50%);
+  width: 28px; height: 28px;
+  display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, var(--accent), #0090cc);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.8rem;
+  border-radius: 8px;
+  font-family: 'Space Mono', monospace;
+}
+
+.step-list li strong {
+  color: var(--text);
+}
+
+/* ─── ALTITUDE DIAGRAM ─── */
+.altitude-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 1.5rem 0;
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+.alt-segment {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 20px;
+  font-size: 0.9rem;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.2s;
+}
+.alt-segment:last-child { border-bottom: none; }
+.alt-segment:hover { background: var(--surface-hover); }
+.alt-segment .alt-height {
+  font-family: 'Space Mono', monospace;
+  font-weight: 700;
+  font-size: 0.95rem;
+  min-width: 90px;
+}
+.alt-segment .alt-action { color: var(--text-dim); flex: 1; margin-left: 1rem; }
+.alt-segment.zone-exit { background: rgba(0,200,255,0.06); }
+.alt-segment.zone-exit .alt-height { color: var(--accent); }
+.alt-segment.zone-work { background: rgba(255,215,64,0.04); }
+.alt-segment.zone-work .alt-height { color: var(--yellow); }
+.alt-segment.zone-pull { background: rgba(255,107,53,0.06); }
+.alt-segment.zone-pull .alt-height { color: var(--accent-warm); }
+.alt-segment.zone-canopy { background: rgba(0,230,118,0.04); }
+.alt-segment.zone-canopy .alt-height { color: var(--green); }
+.alt-segment.zone-emergency { background: rgba(255,82,82,0.06); }
+.alt-segment.zone-emergency .alt-height { color: var(--red); }
+
+/* ─── QUIZ ─── */
+.quiz-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 2rem;
+  margin-bottom: 1rem;
+}
+.quiz-card .q-num {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.75rem;
+}
+.quiz-card .q-text {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin-bottom: 1.25rem;
+}
+.quiz-options { display: flex; flex-direction: column; gap: 0.5rem; }
+.quiz-opt {
+  padding: 12px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.9rem;
+  color: var(--text-dim);
+  transition: all 0.2s;
+  text-align: left;
+  width: 100%;
+}
+.quiz-opt:hover:not(.selected) {
+  background: var(--surface-hover);
+  border-color: rgba(255,255,255,0.15);
+  color: var(--text);
+}
+.quiz-opt.correct {
+  background: rgba(0,230,118,0.1);
+  border-color: var(--green);
+  color: var(--green);
+}
+.quiz-opt.wrong {
+  background: rgba(255,82,82,0.08);
+  border-color: var(--red);
+  color: var(--red);
+}
+.quiz-opt.selected { pointer-events: none; }
+
+.quiz-feedback {
+  margin-top: 1rem;
+  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  display: none;
+}
+.quiz-feedback.show { display: block; }
+.quiz-feedback.correct-fb {
+  background: rgba(0,230,118,0.08);
+  border: 1px solid rgba(0,230,118,0.2);
+  color: var(--green);
+}
+.quiz-feedback.wrong-fb {
+  background: rgba(255,82,82,0.08);
+  border: 1px solid rgba(255,82,82,0.2);
+  color: var(--red);
+}
+
+.quiz-score {
+  text-align: center;
+  padding: 2rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-top: 2rem;
+}
+.quiz-score .big-score {
+  font-family: 'Space Mono', monospace;
+  font-size: 3rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+.quiz-reset {
+  margin-top: 1rem;
+  padding: 10px 24px;
+  background: var(--surface-hover);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600;
+  font-size: 0.9rem;
+  border-radius: 100px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.quiz-reset:hover { background: var(--accent); color: #000; }
+
+/* ─── PROCEDURE FLOW ─── */
+.flow-diagram {
+  display: flex; flex-direction: column; gap: 0;
+  margin: 1.5rem 0;
+  position: relative;
+}
+.flow-diagram::before {
+  content: '';
+  position: absolute;
+  left: 20px; top: 24px; bottom: 24px;
+  width: 2px;
+  background: linear-gradient(to bottom, var(--accent), var(--accent-warm), var(--red));
+  border-radius: 1px;
+}
+.flow-step {
+  display: flex; align-items: flex-start; gap: 1.25rem;
+  padding: 0.75rem 0;
+  position: relative;
+}
+.flow-dot {
+  width: 14px; height: 14px; min-width: 14px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 3px solid var(--sky-top);
+  margin-top: 4px;
+  margin-left: 14px;
+  position: relative; z-index: 1;
+}
+.flow-dot.warn { background: var(--accent-warm); }
+.flow-dot.danger { background: var(--red); }
+.flow-content { flex: 1; }
+.flow-content strong { color: var(--text); display: block; margin-bottom: 2px; }
+.flow-content span { color: var(--text-dim); font-size: 0.9rem; }
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 640px) {
+  .card-grid { grid-template-columns: 1fr; }
+  .hero-stats { gap: 1.5rem; }
+  .info-block { padding: 1.25rem; }
+  .step-list li { padding-left: 3.5rem; }
+  .alt-segment { flex-wrap: wrap; }
+  .alt-segment .alt-action { margin-left: 0; margin-top: 4px; }
+}
+
+/* ─── ACCORDION ─── */
+.accordion { margin-bottom: 0.5rem; }
+.accordion-trigger {
+  width: 100%;
+  text-align: left;
+  padding: 14px 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: space-between;
+  transition: all 0.2s;
+}
+.accordion-trigger:hover { background: var(--surface-hover); }
+.accordion-trigger .arrow { transition: transform 0.3s; color: var(--text-muted); }
+.accordion.open .accordion-trigger {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border-color: rgba(0,200,255,0.15);
+  background: var(--surface-active);
+}
+.accordion.open .arrow { transform: rotate(90deg); }
+.accordion-content {
+  display: none;
+  padding: 1.25rem 1.5rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-top: none;
+  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+  color: var(--text-dim);
+  font-size: 0.9rem;
+  line-height: 1.7;
+}
+.accordion.open .accordion-content { display: block; }
+
+/* ─── FOOTER ─── */
+.footer {
+  text-align: center;
+  padding: 3rem 0;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  border-top: 1px solid var(--border);
+  margin-top: 3rem;
+}
+</style>
+</head>
+<body>
+
+<div class="bg-atmosphere"></div>
+
+<!-- ═══ HERO ═══ -->
+<section class="hero">
+  <div class="hero-badge"><span class="dot"></span> Interaktive Lernplattform</div>
+  <h1><span class="gradient">Skydive Leipzig</span><br>AFF-Ausbildung</h1>
+  <p>Dein digitales Lernhandbuch für die AFF-Ausbildung. Alle Kapitel, Abläufe und Notprozeduren – interaktiv aufbereitet mit Quiz zum Selbsttest.</p>
+  <a href="#start" class="hero-cta" onclick="event.preventDefault(); document.querySelector('.app').scrollIntoView({behavior:'smooth'}); showSection('overview');">
+    Jetzt lernen ↓
+  </a>
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-num">22</div><div class="stat-label">Kapitel</div></div>
+    <div class="stat"><div class="stat-num">35</div><div class="stat-label">Seiten</div></div>
+    <div class="stat"><div class="stat-num">∞</div><div class="stat-label">Sprünge</div></div>
+  </div>
+</section>
+
+<!-- ═══ APP ═══ -->
+<div class="app" id="start">
+
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="nav-inner">
+      <button class="nav-btn active" onclick="showSection('overview')">Überblick</button>
+      <button class="nav-btn" onclick="showSection('equipment')">Ausrüstung</button>
+      <button class="nav-btn" onclick="showSection('canopy')">Fallschirm</button>
+      <button class="nav-btn" onclick="showSection('jump')">Sprungablauf</button>
+      <button class="nav-btn" onclick="showSection('freefall')">Freifall</button>
+      <button class="nav-btn" onclick="showSection('canopycontrol')">Schirmfahrt</button>
+      <button class="nav-btn" onclick="showSection('landing')">Landung</button>
+      <button class="nav-btn" onclick="showSection('emergency')">Notverfahren</button>
+      <button class="nav-btn" onclick="showSection('malfunctions')">Störungen</button>
+      <button class="nav-btn" onclick="showSection('aff1')">AFF Level 1</button>
+      <button class="nav-btn" onclick="showSection('quiz')">Quiz</button>
+    </div>
+  </nav>
+
+  <!-- ═══ OVERVIEW ═══ -->
+  <div class="section active" id="overview">
+    <div class="section-header">
+      <div class="overline">Willkommen</div>
+      <h2>Dein Weg zum Fallschirmspringer</h2>
+      <p>Skydive Leipzig e.V. – Flugplatzstraße 1, 04509 Roitzschjora. Hier findest du alle Ausbildungsinhalte deines AFF-Handouts interaktiv aufbereitet.</p>
+    </div>
+
+    <div class="card-grid">
+      <div class="card" onclick="showSection('equipment')">
+        <div class="card-icon">🎒</div>
+        <h3>Ausrüstung</h3>
+        <p>Gurtzeug, Cypres, Höhenmesser – lerne alle Teile deines Equipments kennen.</p>
+      </div>
+      <div class="card" onclick="showSection('canopy')">
+        <div class="card-icon">🪂</div>
+        <h3>Der Fallschirm</h3>
+        <p>Aufbau, Aerodynamik und der Unterschied zwischen Haupt- und Reserveschirm.</p>
+      </div>
+      <div class="card" onclick="showSection('jump')">
+        <div class="card-icon">✈️</div>
+        <h3>Sprungablauf</h3>
+        <p>Von Boarding über Steigflug bis zum Absprung auf 4000 m – Schritt für Schritt.</p>
+      </div>
+      <div class="card" onclick="showSection('freefall')">
+        <div class="card-icon">🌀</div>
+        <h3>Freifall</h3>
+        <p>Prioritäten, Freifallzeitberechnung und der korrekte Ablauf der Schirmöffnung.</p>
+      </div>
+      <div class="card" onclick="showSection('canopycontrol')">
+        <div class="card-icon">🧭</div>
+        <h3>Schirmfahrt</h3>
+        <p>Flugphasen, Vorfahrtsregeln und der Landeplan mit Wind-V.</p>
+      </div>
+      <div class="card" onclick="showSection('emergency')">
+        <div class="card-icon">🚨</div>
+        <h3>Notverfahren</h3>
+        <p>Notprozedur, Steigflug-V.i.b.F. und Hindernislandungen – Safety first!</p>
+      </div>
+    </div>
+
+    <div class="highlight">
+      <div class="highlight-title">📋 Flugplatz-Verhaltensregeln</div>
+      <ul>
+        <li>Rollende Flugzeuge haben Vorfahrt vor Fußgängern</li>
+        <li>Start-/Landebahn nur in Ausnahmefällen überqueren</li>
+        <li>Hinter der Absperrung nur mit Sprunglehrer</li>
+        <li>Kein Rauchen/Vapen im Packbereich und in geschlossenen Räumen</li>
+        <li>Kinder nur unter Aufsicht, Hunde bitte anleinen</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ═══ EQUIPMENT ═══ -->
+  <div class="section" id="equipment">
+    <div class="section-header">
+      <div class="overline">Kapitel 1–3</div>
+      <h2>Deine Ausrüstung</h2>
+      <p>Das Gurtzeug, der Cypres-Öffnungsautomat und dein Höhenmesser – kenne jedes Teil.</p>
+    </div>
+
+    <div class="info-block">
+      <h3><span class="emoji">🎒</span> Das Gurtzeug – Alle Komponenten</h3>
+      <ul>
+        <li><strong>Brustgurt</strong> – verbindet die beiden Tragegurtseiten vorne</li>
+        <li><strong>Beingurte</strong> – fixieren das Gurtzeug an den Oberschenkeln</li>
+        <li><strong>Haupttragegurte</strong> – verbinden den Schirm mit dem Gurtzeug</li>
+        <li><strong>Dreiringsystem</strong> – ermöglicht die Abtrennung des Hauptschirms</li>
+        <li><strong>Trennkissen</strong> (rechts) – löst die Dreiring-Verbindung zum Abtrennen</li>
+        <li><strong>Reservegriff</strong> (links) – öffnet den Reserveschirm</li>
+        <li><strong>MOD / Shithandle</strong> – alternativer Reservegriff auf der Rückseite</li>
+        <li><strong>Hand-Deploy</strong> (Hilfsschirm) – im BOC (Bottom of Container) verstaut</li>
+        <li><strong>RSL (Reserve Static Line)</strong> – öffnet automatisch die Reserve nach Abtrennung</li>
+        <li><strong>AAD / Cypres</strong> – automatischer Öffnungsautomat</li>
+        <li><strong>Hauptklappen &amp; Reserveklappe</strong> – Container-Verschlüsse für die Schirme</li>
+      </ul>
+    </div>
+
+    <div class="info-block">
+      <h3><span class="emoji">⚙️</span> Das Cypres (Öffnungsautomat)</h3>
+      <p style="color:var(--text-dim); margin-bottom:1rem;">Der Cypres ist dein Sicherheitsnetz – ein automatischer Auslöser für die Reserve.</p>
+      <table class="data-table">
+        <tr><th>Eigenschaft</th><th>Expert</th><th>Student</th></tr>
+        <tr><td>Aktiv nach Einschalten</td><td>14 Stunden</td><td>14 Stunden</td></tr>
+        <tr><td>Aktivierungshöhe</td><td>ab 450 m/GND</td><td>ab 450 m/GND</td></tr>
+        <tr><td>Auslösung 1</td><td>225 m/GND bei &gt;35 m/s</td><td>225 m/GND bei &gt;35 m/s</td></tr>
+        <tr><td>Auslösung 2</td><td>—</td><td>300 m/GND bei &gt;13 m/s &lt;35 m/s</td></tr>
+      </table>
+    </div>
+
+    <div class="highlight warning">
+      <div class="highlight-title">⚠️ Wichtig: Cypres Student beim Landen mit dem Flugzeug</div>
+      <p>Das Cypres-Student muss beim Landen mit dem Flugzeug unbedingt ausgeschaltet werden, da die Sinkgeschwindigkeit des Flugzeugs &gt;13 m/s betragen kann und somit eine ungewollte Auslösung droht!</p>
+    </div>
+
+    <div class="info-block">
+      <h3><span class="emoji">📏</span> Der Höhenmesser</h3>
+      <ul>
+        <li>Arbeitet mechanisch (Druckdose) oder elektronisch (Druckluftsensor)</li>
+        <li>Vor dem Anlegen auf Null stellen!</li>
+        <li>Höhenmesserkontrolle alle 4–6 Sekunden im Freifall</li>
+        <li>Analoge Höhenmesser haben Toleranzen bei der Anzeige</li>
+        <li>Verfügbar als Digital- oder Analogversion</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ═══ CANOPY ═══ -->
+  <div class="section" id="canopy">
+    <div class="section-header">
+      <div class="overline">Kapitel 4</div>
+      <h2>Der Fallschirm</h2>
+      <p>Aufbau, Aerodynamik und technische Daten deines Flächenfallschirms.</p>
+    </div>
+
+    <div class="info-block">
+      <h3><span class="emoji">🪂</span> Aufbau des Fallschirms</h3>
+      <ul>
+        <li><strong>Obersegel &amp; Untersegel</strong> – bilden zusammen das Flügelprofil</li>
+        <li><strong>Zellen</strong> – jede Zelle besteht aus 2 Kammern, Luft strömt vorne ein</li>
+        <li><strong>Stabilisatoren (Stabis)</strong> – an den Flügelenden für Stabilität</li>
+        <li><strong>Fangleinen</strong> – A, B, C, D-Leinen verbinden Kappe mit Tragegurten</li>
+        <li><strong>Steuerleinen (SL)</strong> – zum Lenken und Bremsen der Kappe</li>
+        <li><strong>Slider</strong> – verlangsamt die Öffnung für kontrollierte Entfaltung</li>
+        <li><strong>Hilfsschirm + Verbindungsleine</strong> – initiiert die Öffnungssequenz</li>
+      </ul>
+    </div>
+
+    <div class="highlight">
+      <div class="highlight-title">🔬 Das Tragflächenprinzip (Bernoulli)</div>
+      <p>Der Flächenfallschirm funktioniert wie eine Flugzeugtragfläche. Die gewölbte Oberseite erzeugt schnellere Luftströmung und damit geringeren Druck. Die Druckdifferenz besteht aus <strong style="color:var(--text)">2/3 Unterdruck (Sog) oben</strong> und <strong style="color:var(--text)">1/3 Überdruck unten</strong>. Zusammen mit der Vorwärtsgeschwindigkeit ergibt sich der Auftrieb.</p>
+    </div>
+
+    <div class="info-block">
+      <h3><span class="emoji">📊</span> Hauptschirm vs. Reserve</h3>
+      <table class="data-table">
+        <tr><th>Merkmal</th><th>Hauptschirm</th><th>Reserve</th></tr>
+        <tr><td>Öffnungssystem</td><td>Throw-Out (Hand-Deploy)</td><td>Federhilfsschirm</td></tr>
+        <tr><td>Bauart</td><td>9-Zeller (18 Kammern)</td><td>7-Zeller (14 Kammern)</td></tr>
+        <tr><td>Fangleinen</td><td>Je 10 A-, B-, C-, D-Leinen</td><td>Je 8 A-, B-, C-, D-Leinen</td></tr>
+        <tr><td>Sinkgeschwindigkeit</td><td>3–4 m/s</td><td>3–4 m/s</td></tr>
+        <tr><td>Vorwärtsgeschwindigkeit</td><td>bis 10 m/s</td><td>bis 10 m/s</td></tr>
+        <tr><td>Öffnungsstrecke</td><td>150–200 m</td><td>60–80 m</td></tr>
+        <tr><td>Steuerschlaufen</td><td>gelb</td><td>rot</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- ═══ JUMP PROCEDURE ═══ -->
+  <div class="section" id="jump">
+    <div class="section-header">
+      <div class="overline">Kapitel 5–8</div>
+      <h2>Der Sprungablauf</h2>
+      <p>Vom Boarding am Boden bis zum Absprung aus 4000 Metern.</p>
+    </div>
+
+    <div class="info-block">
+      <h3><span class="emoji">🚶</span> Boarding</h3>
+      <ul>
+        <li>Einstiegspunkt auf der Wiese gegenüber dem Manifest</li>
+        <li>Anweisungen von Pilot/Sprunglehrer befolgen</li>
+        <li>Helm auf und geschlossen, Sprungbrille um den Hals</li>
+        <li>In festgelegter Sprungreihenfolge einsteigen</li>
+        <li>Sitzposition einnehmen und anschnallen</li>
+      </ul>
+    </div>
+
+    <div class="info-block">
+      <h3><span class="emoji">✈️</span> Start &amp; Steigflug</h3>
+      <ul>
+        <li>Im Flugzeug ruhig sitzen, Griffe sichern</li>
+        <li>Bis 300 m/GND: Helm bleibt auf und geschlossen</li>
+        <li>Nach 300 m/GND: Abschnallen</li>
+        <li>Höhenmesser beobachten, Sprungablauf mehrmals durchgehen</li>
+        <li>Sprungplatz von oben einprägen → schnellere Orientierung am Schirm</li>
+      </ul>
+    </div>
+
+    <div class="highlight warning">
+      <div class="highlight-title">⚠️ Flugzeug – Sicherheit</div>
+      <ul>
+        <li>Flugzeug nur von seitlich hinten annähern!</li>
+        <li>Nie nah am Propeller vorbeigehen!</li>
+        <li>Nie einem rollenden Flugzeug nähern!</li>
+        <li>Boarding nur gemeinsam mit deinem Sprunglehrer!</li>
+      </ul>
+    </div>
+
+    <h3 style="margin: 2rem 0 1rem; font-size:1.15rem;">Höhenprofil des Sprungs</h3>
+    <div class="altitude-bar">
+      <div class="alt-segment zone-exit">
+        <span class="alt-height">4000 m</span>
+        <span class="alt-action">Tür auf – Absprung</span>
+      </div>
+      <div class="alt-segment">
+        <span class="alt-height">3700 m</span>
+        <span class="alt-action">Ende Wurfphase (~10 Sek., 30 m/s), Beginn stabiler Freifall</span>
+      </div>
+      <div class="alt-segment">
+        <span class="alt-height">3000 m</span>
+        <span class="alt-action">Sprungfertig machen – Letzter Check durch Lehrer</span>
+      </div>
+      <div class="alt-segment zone-work">
+        <span class="alt-height">2000 m</span>
+        <span class="alt-action">„No more work" – Freifallprogramm beenden</span>
+      </div>
+      <div class="alt-segment zone-pull">
+        <span class="alt-height">1700 m</span>
+        <span class="alt-action">PULL – Schirmöffnung einleiten</span>
+      </div>
+      <div class="alt-segment zone-canopy">
+        <span class="alt-height">~1500 m</span>
+        <span class="alt-action">Schirm offen – Kappen- &amp; Funktionskontrolle</span>
+      </div>
+      <div class="alt-segment zone-emergency">
+        <span class="alt-height">500 m</span>
+        <span class="alt-action">ENTSCHEIDUNGSHÖHE – Notprozedur wenn nötig</span>
+      </div>
+      <div class="alt-segment zone-canopy">
+        <span class="alt-height">300 m</span>
+        <span class="alt-action">Landeplan einleiten (Rückenwindteil)</span>
+      </div>
+      <div class="alt-segment zone-canopy">
+        <span class="alt-height">100 m</span>
+        <span class="alt-action">Endanflug (Final) gegen den Wind</span>
+      </div>
+      <div class="alt-segment">
+        <span class="alt-height">0 m</span>
+        <span class="alt-action">Landung 🎯</span>
+      </div>
+    </div>
+
+    <div class="info-block">
+      <h3><span class="emoji">⏱️</span> Freifallzeitberechnung</h3>
+      <p style="color:var(--text-dim); margin-bottom:1rem;">Beispiel: Absprunghöhe 4000 m → Öffnungshöhe 1700 m</p>
+      <table class="data-table">
+        <tr><th>Phase</th><th>Höhenverlust</th><th>Geschwindigkeit</th><th>Dauer</th></tr>
+        <tr><td>Wurf (Beschleunigung)</td><td>300 m</td><td>~30 m/s</td><td>~10 Sek.</td></tr>
+        <tr><td>Stabiler Freifall</td><td>2000 m</td><td>~50 m/s</td><td>~40 Sek.</td></tr>
+        <tr><td><strong style="color:var(--text)">Gesamt</strong></td><td><strong style="color:var(--text)">2300 m</strong></td><td></td><td><strong style="color:var(--accent)">~50 Sek.</strong></td></tr>
+      </table>
+      <p style="color:var(--text-muted); font-size:0.85rem; margin-top:0.75rem;">Formel: Freifallzeit gesamt = Wurfzeit + Freifallzeit</p>
+    </div>
+  </div>
+
+  <!-- ═══ FREEFALL ═══ -->
+  <div class="section" id="freefall">
+    <div class="section-header">
+      <div class="overline">Kapitel 9–10</div>
+      <h2>Der Freifall &amp; Schirmöffnung</h2>
+      <p>Freifallprioritäten und der korrekte Ablauf der Schirmöffnung.</p>
+    </div>
+
+    <div class="highlight">
+      <div class="highlight-title">🎯 Freifallprioritäten (in dieser Reihenfolge!)</div>
+      <ol style="list-style:none; padding:0; counter-reset:prio;">
+        <li style="counter-increment:prio; padding:0.3rem 0; color:var(--text);">1. <strong>Ziehen / Pull</strong></li>
+        <li style="counter-increment:prio; padding:0.3rem 0; color:var(--text-dim);">2. Ziehen in der <strong style="color:var(--text)">richtigen Höhe</strong></li>
+        <li style="counter-increment:prio; padding:0.3rem 0; color:var(--text-dim);">3. Ziehen in der richtigen <strong style="color:var(--text)">Lage</strong> und Höhe</li>
+        <li style="counter-increment:prio; padding:0.3rem 0; color:var(--text-dim);">4. Ziehen nach Beendigung des <strong style="color:var(--text)">Freifallprogramms</strong></li>
+      </ol>
+    </div>
+
+    <div class="highlight warning">
+      <div class="highlight-title">🔴 Grundsatz: ZIEHEN VOR LAGE UND PROGRAMM</div>
+      <p>Sofortige Schirmöffnung bei: Öffnungshöhe erreicht/unterschritten, Pull-Zeichen des Ausbilders, Ausbilder öffnet eigenen Schirm, Verlust beider Lehrer, Verlust der Höhenkontrolle.</p>
+    </div>
+
+    <h3 style="margin: 2rem 0 1rem; font-size:1.15rem;">Ablauf der Schirmöffnung</h3>
+    <ol class="step-list">
+      <li>Bei <strong>1700 m/GND</strong> Öffnung einleiten: <strong>„Abwinken – Durchdrücken – Greifen – Ziehen"</strong></li>
+      <li>Hand-Deploy vom Körper wegführen und sofort <strong>im 45°-Winkel in den Luftstrom werfen</strong></li>
+      <li>Zählen: <strong>„1000 – 2000 – 3000 – Checktausend"</strong> unter Beibehaltung der Box-Position</li>
+      <li>Öffnungs-, Streck- und Füllvorgang läuft ab → <strong>Kappenentfaltung</strong></li>
+    </ol>
+
+    <h3 style="margin: 2rem 0 1rem; font-size:1.15rem;">Kappen- &amp; Funktionskontrolle</h3>
+    <ol class="step-list">
+      <li><strong>Blick nach oben (Kappenkontrolle):</strong> Zellen offen? Rechteckiges Profil? Keine Beschädigungen? Fangleinen gestreckt &amp; nicht verdreht? Geradeausflug?</li>
+      <li><strong>Luftraum- &amp; Höhenkontrolle:</strong> Wo bin ich? Wo sind die Anderen? Wo will ich hin? Ggf. mit hinteren Tragegurten Richtung Platz drehen. Bei Kollisionsgefahr nach rechts ausweichen.</li>
+      <li><strong>Funktionskontrolle:</strong> Steuerschlaufen greifen, Vorbremsung lösen, 90° rechts, 90° links, 3 Sek. volle Fahrt → Flare</li>
+      <li><strong>Ggf. erweiterte Funktionskontrolle:</strong> 360° Rechts-/Linkskurve, 3 Sek. volle Fahrt (Flare/Bremsprobe)</li>
+    </ol>
+  </div>
+
+  <!-- ═══ CANOPY CONTROL ═══ -->
+  <div class="section" id="canopycontrol">
+    <div class="section-header">
+      <div class="overline">Kapitel 12–14</div>
+      <h2>Schirmfahrt &amp; Landeplan</h2>
+      <p>Flugphasen, Vorfahrtsregeln und das Wind-V.</p>
+    </div>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">↗️</div>
+        <h3>Gleitflug</h3>
+        <p>Arme ganz nach oben + kleine Körperhaltung = maximale Vorwärtsfahrt.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">↩️</div>
+        <h3>Kurvenflug</h3>
+        <p>Einseitiges Ziehen der Steuerleinen. Starkes Ziehen = enge Kurve (großer Höhenverlust). Leichtes Ziehen = weite Kurve.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">✋</div>
+        <h3>Flare (Bremsen)</h3>
+        <p>Gleichmäßiges Ziehen beider Steuerleinen bremst Vorwärts- und Sinkgeschwindigkeit. Vorsicht: nach 2–3 Sek. lässt die Wirkung nach (Strömungsabriss-Gefahr).</p>
+      </div>
+    </div>
+
+    <div class="highlight">
+      <div class="highlight-title">📐 Schirmfahrt-Regeln unter 500 m/GND</div>
+      <ul>
+        <li>Keine 360°-Drehungen mehr</li>
+        <li>Kontrollierter Höhenabbau</li>
+        <li>Abstand zu anderen Fallschirmen einhalten</li>
+        <li>Ab 100 m: gerader Endanflug zum Landepunkt</li>
+        <li><strong style="color:var(--text)">Der untere Springer hat Vorfahrt!</strong></li>
+        <li>Bei Kollisionsgefahr: beide nach rechts ausweichen</li>
+      </ul>
+    </div>
+
+    <div class="info-block">
+      <h3><span class="emoji">💨</span> Das Wind-V &amp; der Landeplan</h3>
+      <p style="color:var(--text-dim); margin-bottom:1rem;">Die Größe des Wind-V ist abhängig von der Windstärke. Höhenabbau auf der Luv-Seite (windhohe Seite) des Landeplatzes.</p>
+      <div class="altitude-bar">
+        <div class="alt-segment">
+          <span class="alt-height">600–400 m</span>
+          <span class="alt-action">Windcheck, 180°-Kurve zum Platz, keine Hindernisse mehr überfliegen</span>
+        </div>
+        <div class="alt-segment">
+          <span class="alt-height">300–200 m</span>
+          <span class="alt-action">Rückenwindteil (Gegenanflug), dann 90°-Kurve</span>
+        </div>
+        <div class="alt-segment">
+          <span class="alt-height">200–100 m</span>
+          <span class="alt-action">Basisteil (Queranflug), wiederum 90°-Kurve</span>
+        </div>
+        <div class="alt-segment zone-canopy">
+          <span class="alt-height">100–0 m</span>
+          <span class="alt-action">Endanflug (Final) – gegen den Wind!</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="highlight success">
+      <div class="highlight-title">✅ Landeprioritäten</div>
+      <ol style="list-style:none; padding:0;">
+        <li style="padding:0.25rem 0; color:var(--text);">1. Kappe ist parallel zum Boden</li>
+        <li style="padding:0.25rem 0; color:var(--text-dim);">2. Frei von Hindernissen</li>
+        <li style="padding:0.25rem 0; color:var(--text-dim);">3. Mindestens halb gebremst</li>
+        <li style="padding:0.25rem 0; color:var(--text-dim);">4. Gegen den Wind</li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- ═══ LANDING ═══ -->
+  <div class="section" id="landing">
+    <div class="section-header">
+      <div class="overline">Kapitel 15</div>
+      <h2>Die Landung – Der Flare</h2>
+      <p>Endanflug, halbe Bremse, volle Bremse – und der Pendeleffekt.</p>
+    </div>
+
+    <h3 style="margin-bottom:1rem;">Ablauf: Achtung – Schulter – Flare</h3>
+    <div class="flow-diagram">
+      <div class="flow-step">
+        <div class="flow-dot"></div>
+        <div class="flow-content">
+          <strong>Endanflug – 100 m/GND</strong>
+          <span>8–10 Sek. volle Fahrt (Steuerleinen ganz nach oben). Leichte Korrekturen über Gurtzeug oder hintere Haupttragegurte möglich.</span>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-dot warn"></div>
+        <div class="flow-content">
+          <strong>Halbe Bremse / Schulter – ca. 3–4 m/GND</strong>
+          <span>Flare beginnt auf Höhe des Windsacks. Der Körper pendelt unter die Flügelvorderkante. Sinkgeschwindigkeit wird gestoppt.</span>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-dot danger"></div>
+        <div class="flow-content">
+          <strong>Volle Bremse – ca. 1,5 m/GND</strong>
+          <span>Steuerleinen symmetrisch eng am Körper nach unten bis zur völligen Armstreckung. Position halten bis zur Landung!</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="highlight warning">
+      <div class="highlight-title">⚠️ Der Pendeleffekt – Wenn zu hoch gebremst wird</div>
+      <p>Wenn du zu hoch bremst und dann die Steuerleinen loslässt, beschleunigt der Schirm sofort wieder. Dein Körper bleibt durch die Trägheit zunächst stehen und pendelt nach vorn – der Schirm zieht dich in einer Bogenbewegung nach unten-vorn. <strong style="color:var(--red)">Hohes Verletzungsrisiko kurz über dem Boden!</strong></p>
+      <p style="margin-top:0.5rem;"><strong style="color:var(--yellow)">Regel: Wenn zu hoch gebremst → gebremst halten und Landefall durchführen!</strong></p>
+    </div>
+
+    <div class="info-block">
+      <h3><span class="emoji">🌬️</span> Verhalten bei Wind</h3>
+      <div class="accordion">
+        <button class="accordion-trigger" onclick="toggleAccordion(this)">Starker Wind <span class="arrow">▸</span></button>
+        <div class="accordion-content">
+          Im Endanflug nur wenig Vorwärtsfahrt. Rechtzeitig auch in größeren Höhen gegen den Wind stellen. Keine großen Kurven zum Endanflug fliegen – zügig gegen den Wind stellen.
+        </div>
+      </div>
+      <div class="accordion">
+        <button class="accordion-trigger" onclick="toggleAccordion(this)">Schwacher Wind <span class="arrow">▸</span></button>
+        <div class="accordion-content">
+          Noch viel Fahrt im Endanflug und bei der Landung. Auf eine schnelle Landung gefasst machen. Möglicherweise wird der gedachte Landepunkt überflogen – Hindernisbereich beachten!
+        </div>
+      </div>
+    </div>
+
+    <div class="info-block">
+      <h3><span class="emoji">📦</span> Verhalten nach der Landung</h3>
+      <ul>
+        <li>Bei Wind: Kappe umlaufen oder Steuerleine bis zum Stoff einziehen</li>
+        <li>Vorbremsung setzen</li>
+        <li>Fallschirm ordentlich aufnehmen, Leinen bündeln</li>
+        <li>Umschau halten (landende Springer!)</li>
+        <li>Ausrüstung auf Packmatte ablegen, Leinencheck, aufpacken</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ═══ EMERGENCY ═══ -->
+  <div class="section" id="emergency">
+    <div class="section-header">
+      <div class="overline">Kapitel 16–17, 19–21</div>
+      <h2>Notverfahren &amp; Sicherheit</h2>
+      <p>Notprozedur, V.i.b.F. im Steigflug, Luv/Lee und Hindernislandungen.</p>
+    </div>
+
+    <div class="highlight warning" style="border-width:2px;">
+      <div class="highlight-title" style="font-size:1.1rem;">🚨 DIE NOTPROZEDUR – Entscheidungshöhe 500 m/GND</div>
+      <p style="margin-bottom:1rem;">Die 500-Meter-Marke ist deine letzte Sicherheitsgrenze. Wenn bis dahin kein sicherer Flug am Hauptschirm → sofort Notprozedur. Klar, einfach, immer gleich.</p>
+    </div>
+
+    <h3 style="margin-bottom:1rem;">Ablauf Notprozedur</h3>
+    <ol class="step-list">
+      <li><strong>Höhenmesser Kontrolle</strong></li>
+      <li><strong>Rechts schauen</strong> – rechts greift – links unterstützt – <strong>ziehen (Trennkissen)</strong></li>
+      <li><strong>Links schauen</strong> – links greift – rechts unterstützt – <strong>ziehen (Reservegriff)</strong></li>
+      <li><strong>Boxposition</strong> (Freifallhaltung) einnehmen</li>
+      <li><strong>Höhenmesser Kontrolle</strong></li>
+      <li><strong>Funktionskontrolle</strong> der Reserve</li>
+    </ol>
+
+    <div class="card-grid" style="margin-top:1.5rem;">
+      <div class="card" style="border-color:rgba(0,230,118,0.2);">
+        <div class="card-icon" style="background:rgba(0,230,118,0.1);">✅</div>
+        <h3 style="color:var(--green);">Über 500 m/GND</h3>
+        <p>Abtrennen UND Reserve ziehen (vollständige Notprozedur)</p>
+      </div>
+      <div class="card" style="border-color:rgba(255,82,82,0.2);">
+        <div class="card-icon" style="background:rgba(255,82,82,0.1);">🔴</div>
+        <h3 style="color:var(--red);">Unter 500 m/GND</h3>
+        <p>Sofort die Reserve DAZU ziehen (nicht mehr abtrennen!)</p>
+      </div>
+    </div>
+
+    <div class="info-block" style="margin-top:2rem;">
+      <h3><span class="emoji">✈️</span> V.i.b.F. – Steigflug (Verhalten im besonderen Fall)</h3>
+      <div class="accordion">
+        <button class="accordion-trigger" onclick="toggleAccordion(this)">Mit dem Flugzeug landen <span class="arrow">▸</span></button>
+        <div class="accordion-content">Helm aufsetzen → Cypres deaktivieren → Anschnallen → Auf Anweisung des Piloten das Flugzeug verlassen.</div>
+      </div>
+      <div class="accordion">
+        <button class="accordion-trigger" onclick="toggleAccordion(this)">Not-Landung (bis 300 m/GND) <span class="arrow">▸</span></button>
+        <div class="accordion-content">Helm bleibt auf, angeschnallt bleiben, Crash-Haltung: Knie an die Brust ziehen, Hände hinter dem Kopf verschränken, Kinn auf die Brust.</div>
+      </div>
+      <div class="accordion">
+        <button class="accordion-trigger" onclick="toggleAccordion(this)">Not-Exit mit Reserve (300–800 m/GND) <span class="arrow">▸</span></button>
+        <div class="accordion-content">Zügig vorrücken → Hand an Reservegriff → Absprung → „1000" sprechen → Reserve ziehen.</div>
+      </div>
+      <div class="accordion">
+        <button class="accordion-trigger" onclick="toggleAccordion(this)">Not-Exit mit Hauptschirm (ab 800 m/GND) <span class="arrow">▸</span></button>
+        <div class="accordion-content">Ruhe bewahren → zügig vorrücken → Hand am Handdeploy → Absprung → 1000, 2000, 3000 → Hauptschirm öffnen. Auf Außenlandung vorbereitet sein.</div>
+      </div>
+      <div class="accordion">
+        <button class="accordion-trigger" onclick="toggleAccordion(this)">Ungewollte Schirmöffnung im Flugzeug <span class="arrow">▸</span></button>
+        <div class="accordion-content">Alle Springer informieren. Türen bleiben zu. Falls Tür offen: sofort schließen, Absetzvorgang abbrechen. Hauptschirm offen: RSL lösen, abtrennen, sichern. Reserve offen: alles festhalten, sichern. Flugzeug landet.</div>
+      </div>
+    </div>
+
+    <div class="info-block">
+      <h3><span class="emoji">💨</span> Luv und Lee</h3>
+      <p style="color:var(--text-dim); margin-bottom:1rem;"><strong style="color:var(--text)">Luv</strong> = windzugewandte Seite (Aufwindwalzen) | <strong style="color:var(--text)">Lee</strong> = windabgewandte Seite (Abwindwalzen)</p>
+      <ul>
+        <li>Im Lee entstehen starke Abwinde – sehr gefährlich im Landeanflug!</li>
+        <li>Sinkgeschwindigkeit kann sich verdoppeln oder verdreifachen</li>
+        <li>Schirm kann aufhören zu tragen / kollabieren</li>
+      </ul>
+      <div class="highlight" style="margin-top:1rem;">
+        <div class="highlight-title">📐 Faustformel</div>
+        <p style="font-family:'Space Mono',monospace; font-size:1.05rem; color:var(--text);"><strong>Hindernishöhe × Windstärke (kn) = Leebereich</strong></p>
+      </div>
+    </div>
+
+    <div class="info-block">
+      <h3><span class="emoji">🏠</span> Hindernislandungen</h3>
+      <div class="accordion">
+        <button class="accordion-trigger" onclick="toggleAccordion(this)">🌲 Baumlandung / Waldlandung <span class="arrow">▸</span></button>
+        <div class="accordion-content">Möglichst gegen den Wind. Waldoberkante als Boden betrachten. Beine zusammen, Knie hoch. 3 m über Wipfel: halbe Bremse, Fäuste vors Gesicht, Ellenbogen zusammen. Verfängt sich der Schirm: hängen bleiben, festhalten, auf Hilfe warten. Sackt der Schirm → Landefall!</div>
+      </div>
+      <div class="accordion">
+        <button class="accordion-trigger" onclick="toggleAccordion(this)">🌊 Wasserlandung <span class="arrow">▸</span></button>
+        <div class="accordion-content">Richtung Ufer landen. RSL lösen. Gurtzeug lockern/Brustgurt öffnen. Landefall vorbereiten. Nach Wasserberührung: Kappe trennen, Beingurte öffnen, aus Gurtzeug befreien. Nicht Ausrüstung retten! Sofort Richtung Ufer schwimmen.</div>
+      </div>
+      <div class="accordion">
+        <button class="accordion-trigger" onclick="toggleAccordion(this)">🏠 Hausdächer <span class="arrow">▸</span></button>
+        <div class="accordion-content"><strong>Giebeldach:</strong> Ruhe bewahren, normal bremsen, festhalten. <strong>Flachdach:</strong> Dachmitte ansteuern, ggf. Hauptschirm trennen (RSL aushängen). Bei Sturz vom Dach → Landefall.</div>
+      </div>
+      <div class="accordion">
+        <button class="accordion-trigger" onclick="toggleAccordion(this)">⚡ Hochspannungsleitungen <span class="arrow">▸</span></button>
+        <div class="accordion-content">Wenn unvermeidbar: längs der Leitung fliegen. Beine zusammen, Ellenbogen vor Brust, Hände vors Gesicht. Bei Hängenbleiben: Erdung vermeiden, auf kompetente Hilfe warten! Bei Bodenkontakt sofort Hauptschirm abtrennen.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ MALFUNCTIONS ═══ -->
+  <div class="section" id="malfunctions">
+    <div class="section-header">
+      <div class="overline">Kapitel 18</div>
+      <h2>V.i.b.F. – Störungen bei Schirmöffnung</h2>
+      <p>Leichte Störungen, schwere Störungen und Fehlöffnungen – und was du tun musst.</p>
+    </div>
+
+    <div class="highlight">
+      <div class="highlight-title">📋 Entscheidungsschema</div>
+      <p><strong style="color:var(--text)">In Ordnung</strong> → Normales Verfahren | <strong style="color:var(--yellow)">Leichte Störung</strong> → Beheben versuchen | <strong style="color:var(--accent-warm)">Schwere Störung</strong> → Erweiterte Funktionskontrolle → Landbar? | <strong style="color:var(--red)">Fehlöffnung</strong> → Sofort Notprozedur</p>
+    </div>
+
+    <h3 style="margin:1.5rem 0 1rem;">Leichte Störungen</h3>
+    <div class="accordion">
+      <button class="accordion-trigger" onclick="toggleAccordion(this)">Geschlossene Außenzellen (rechts/links) <span class="arrow">▸</span></button>
+      <div class="accordion-content">Höhenkontrolle → Vorbremsung lösen → Zellen aufpumpen. Kein Erfolg = Notprozedur.</div>
+    </div>
+    <div class="accordion">
+      <button class="accordion-trigger" onclick="toggleAccordion(this)">Leichte Fangleinenverdrehung <span class="arrow">▸</span></button>
+      <div class="accordion-content">Höhenkontrolle → Vorbremsung stecken lassen → Ausdrehung unterstützen. Kein Erfolg = Notprozedur.</div>
+    </div>
+    <div class="accordion">
+      <button class="accordion-trigger" onclick="toggleAccordion(this)">Vorbremsung einseitig herausgeflogen <span class="arrow">▸</span></button>
+      <div class="accordion-content">Höhenkontrolle → Vorbremsung symmetrisch lösen → Ggf. erweiterte Funktionskontrolle.</div>
+    </div>
+    <div class="accordion">
+      <button class="accordion-trigger" onclick="toggleAccordion(this)">Steuerleine gerissen <span class="arrow">▸</span></button>
+      <div class="accordion-content">Höhenkontrolle → Gegenüberliegende Vorbremsung lösen → Funktionskontrolle mit hinteren Tragegurten → Landung mit Tragegurten im Landefall.</div>
+    </div>
+    <div class="accordion">
+      <button class="accordion-trigger" onclick="toggleAccordion(this)">Steuerleine verknotet <span class="arrow">▸</span></button>
+      <div class="accordion-content">Höhenkontrolle → Drehungen mit Tragegurten oder gegenüberliegender Steuerleine ausgleichen → Erweiterte Funktionskontrolle.</div>
+    </div>
+    <div class="accordion">
+      <button class="accordion-trigger" onclick="toggleAccordion(this)">Slider bleibt auf halber Höhe <span class="arrow">▸</span></button>
+      <div class="accordion-content">Höhenkontrolle → Vorbremsung lösen → Slider herunter pumpen. Nicht pumpbar: erweiterte Funktionskontrolle.</div>
+    </div>
+
+    <h3 style="margin:2rem 0 1rem;">Schwere Störungen</h3>
+    <div class="accordion">
+      <button class="accordion-trigger" onclick="toggleAccordion(this)">Schwere Fangleinenverdrehung <span class="arrow">▸</span></button>
+      <div class="accordion-content">Höhenkontrolle → Vorbremsung stecken lassen → Ausdrehung unterstützen. Kein Erfolg = Notprozedur.</div>
+    </div>
+    <div class="accordion">
+      <button class="accordion-trigger" onclick="toggleAccordion(this)">Mehrere geschlossene Außenzellen <span class="arrow">▸</span></button>
+      <div class="accordion-content">Höhenkontrolle → Vorbremsung lösen → Zellen aufpumpen → Ggf. erweiterte Funktionskontrolle. Kein Erfolg = Notprozedur.</div>
+    </div>
+    <div class="accordion">
+      <button class="accordion-trigger" onclick="toggleAccordion(this)">Gerissene Fangleinen <span class="arrow">▸</span></button>
+      <div class="accordion-content">Höhenkontrolle → Vorbremsung lösen → Kappe stabilisieren (max. 50% Gegensteuern) → Vorsichtig steuern, landen im Landefall. Kein Erfolg = Notprozedur.</div>
+    </div>
+    <div class="accordion">
+      <button class="accordion-trigger" onclick="toggleAccordion(this)">BIPLANE (Schirme hintereinander) <span class="arrow">▸</span></button>
+      <div class="accordion-content">Höhenkontrolle → Vorbremsung NICHT lösen → Vorsichtig mit hinteren Tragegurten des vorderen Schirms steuern → Hauptschirm NICHT abtrennen → Landen ohne Flare im Landefall.</div>
+    </div>
+
+    <h3 style="margin:2rem 0 1rem;">Fehlöffnungen (sofort Notprozedur!)</h3>
+    <div class="accordion">
+      <button class="accordion-trigger" onclick="toggleAccordion(this)">Totalversager / Bag-Lock / Fahne / Brötchen <span class="arrow">▸</span></button>
+      <div class="accordion-content">
+        <strong>Totalversager:</strong> Keine Öffnung erkennbar → ggf. Ellbogen gegen Container schlagen, kein Erfolg → Notprozedur.<br>
+        <strong>Bag-Lock:</strong> POD bleibt geschlossen → sofort Notprozedur.<br>
+        <strong>Fahne / Brötchen:</strong> Höhenkontrolle → wenn Zeit: Vorbremsung lösen, pumpen (max. 1–2x). Kein Erfolg → Notprozedur.<br>
+        <strong>Zerrissener Schirm / Autorotation / Gerissener Tragegurt:</strong> Sofort Notprozedur!
+      </div>
+    </div>
+    <div class="accordion">
+      <button class="accordion-trigger" onclick="toggleAccordion(this)">DOWN-PLANE (Kappe fliegt vertikal zu Boden) <span class="arrow">▸</span></button>
+      <div class="accordion-content">RSL lösen → Schnell und auf jeden Fall Hauptschirm abtrennen!</div>
+    </div>
+    <div class="accordion">
+      <button class="accordion-trigger" onclick="toggleAccordion(this)">Side-by-Side (Schirme nebeneinander) <span class="arrow">▸</span></button>
+      <div class="accordion-content">Höhenkontrolle → Reserve offen & getrennt: RSL lösen, Hauptschirm abtrennen. Verwickelt: NICHT abtrennen, mit Tragegurten steuern, Landefall.</div>
+    </div>
+  </div>
+
+  <!-- ═══ AFF LEVEL 1 ═══ -->
+  <div class="section" id="aff1">
+    <div class="section-header">
+      <div class="overline">Kapitel 22</div>
+      <h2>AFF Level 1 – Sprungablauf</h2>
+      <p>Dein erster AFF-Sprung: 2 Lehrer, 4000 m/GND.</p>
+    </div>
+
+    <div class="flow-diagram">
+      <div class="flow-step">
+        <div class="flow-dot"></div>
+        <div class="flow-content">
+          <strong>AFF-Exit Aufstellung</strong>
+          <span>An der Tür positionieren mit beiden Lehrern</span>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-dot"></div>
+        <div class="flow-content">
+          <strong>„Check links" – Nicken abwarten</strong>
+          <span>Blickkontakt mit dem linken Lehrer, auf Bestätigung warten</span>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-dot"></div>
+        <div class="flow-content">
+          <strong>„Check rechts" – Nicken abwarten</strong>
+          <span>Blickkontakt mit dem rechten Lehrer, auf Bestätigung warten</span>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-dot warn"></div>
+        <div class="flow-content">
+          <strong>Kommando: „Raus – Rein – Raus"</strong>
+          <span>Rhythmisches Einzählen, dann Absprung!</span>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-dot"></div>
+        <div class="flow-content">
+          <strong>Stabile Körperhaltung nach Exit</strong>
+          <span>Sofort Box-Position, großer Beobachtungskreis, Höhenkontrolle</span>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-dot"></div>
+        <div class="flow-content">
+          <strong>Höhe durchgeben links &amp; rechts</strong>
+          <span>„Abgelesene Höhe" links durchgeben → OK/Korrektur abwarten. Dann rechts.</span>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-dot"></div>
+        <div class="flow-content">
+          <strong>Programm: 3× Scheingriff zum Hand-Deploy</strong>
+          <span>Hand zum Griff führen – sauber zurückführen. Höhenbewusstsein signalisieren. Alle 4–6 Sek. Höhenmesserkontrolle.</span>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-dot warn"></div>
+        <div class="flow-content">
+          <strong>2000 m/GND – „No more work"</strong>
+          <span>Kopf schütteln, Blick auf Höhenmesser, Zählen: 1900, 1800, 1700</span>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-dot danger"></div>
+        <div class="flow-content">
+          <strong>1700 m/GND – PULL!</strong>
+          <span>„Abwinken – Durchdrücken – Greifen – Ziehen"</span>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-dot" style="background:var(--green);"></div>
+        <div class="flow-content">
+          <strong>Landung auf der Landefläche</strong>
+          <span>Mit Funkunterstützung vom Lehrer</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-block">
+      <h3><span class="emoji">🤙</span> Handzeichen im Freifall</h3>
+      <table class="data-table">
+        <tr><th>Zeichen</th><th>Bedeutung</th><th>Deine Reaktion</th></tr>
+        <tr><td>✊ Pull</td><td>Sofort ziehen!</td><td>Abwinken – Durchdrücken – Greifen – Ziehen</td></tr>
+        <tr><td>👆 Höhenmesser</td><td>Höhe checken</td><td>Blick auf Höhenmesser, entsprechend handeln</td></tr>
+        <tr><td>🤲 Hüfte vor</td><td>Hüfte nach vorne</td><td>Becken als tiefsten Punkt, Arme auf Augenhöhe</td></tr>
+        <tr><td>🦵 Beine länger</td><td>Unterschenkel strecken</td><td>Langsam strecken bis Zeichen verschwindet</td></tr>
+        <tr><td>🦵 Beine kürzer</td><td>Unterschenkel anziehen</td><td>Langsam anziehen bis Zeichen verschwindet</td></tr>
+        <tr><td>✋ Scheingriff</td><td>Übe den Griff</td><td>Drücken – Hand-Deploy ertasten – zurückführen</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- ═══ QUIZ ═══ -->
+  <div class="section" id="quiz">
+    <div class="section-header">
+      <div class="overline">Wissenstest</div>
+      <h2>Teste dein Wissen</h2>
+      <p>15 Fragen zu den wichtigsten Themen deiner AFF-Ausbildung.</p>
+    </div>
+    <div id="quiz-container"></div>
+    <div id="quiz-score-container"></div>
+  </div>
+
+  <div class="footer">
+    <p>Skydive Leipzig e.V. – Flugplatzstraße 1, 04509 Roitzschjora<br>
+    Interaktive Lernplattform basierend auf dem AFF-Ausbildungshandout (01.05.2026)<br>
+    <span style="color:var(--text-muted);">Diese Seite ersetzt nicht die praktische Ausbildung mit deinen Sprunglehrern!</span></p>
+  </div>
+</div>
+
+<script>
+// ─── NAVIGATION ───
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const btns = document.querySelectorAll('.nav-btn');
+  const sectionIds = ['overview','equipment','canopy','jump','freefall','canopycontrol','landing','emergency','malfunctions','aff1','quiz'];
+  const idx = sectionIds.indexOf(id);
+  if (idx >= 0 && btns[idx]) btns[idx].classList.add('active');
+  window.scrollTo({ top: document.querySelector('.app').offsetTop - 60, behavior: 'smooth' });
+}
+
+// ─── ACCORDION ───
+function toggleAccordion(btn) {
+  const acc = btn.parentElement;
+  acc.classList.toggle('open');
+}
+
+// ─── QUIZ ───
+const quizData = [
+  { q: "Wie lange ist der Cypres nach dem Einschalten aktiv?", opts: ["8 Stunden","12 Stunden","14 Stunden","24 Stunden"], correct: 2, explain: "Der Cypres ist nach dem Einschalten 14 Stunden aktiv." },
+  { q: "Ab welcher Höhe ist der Cypres arbeitsbereit?", opts: ["225 m/GND","300 m/GND","450 m/GND","500 m/GND"], correct: 2, explain: "Arbeitsbereitschaft/Aktivierungshöhe ab 450 m/GND." },
+  { q: "Wie oft sollst du im Freifall den Höhenmesser kontrollieren?", opts: ["Alle 2 Sek.","Alle 4–6 Sek.","Alle 10 Sek.","Nur einmal bei 2000 m"], correct: 1, explain: "Höhenmesserkontrolle alle 4–6 Sekunden." },
+  { q: "Was ist die oberste Freifallpriorität?", opts: ["Stabile Lage","Programm beenden","Ziehen / Pull","Höhe ablesen"], correct: 2, explain: "Priorität 1: Ziehen / Pull – ZIEHEN VOR LAGE UND PROGRAMM." },
+  { q: "In welcher Höhe wird die Schirmöffnung eingeleitet?", opts: ["2000 m/GND","1700 m/GND","1500 m/GND","1000 m/GND"], correct: 1, explain: "Öffnungshöhe: 1700 m/GND." },
+  { q: "Wie lautet die korrekte Reihenfolge der Schirmöffnung?", opts: ["Greifen – Ziehen – Abwinken","Durchdrücken – Greifen – Abwinken – Ziehen","Abwinken – Durchdrücken – Greifen – Ziehen","Ziehen – Abwinken – Greifen"], correct: 2, explain: "Abwinken – Durchdrücken – Greifen – Ziehen." },
+  { q: "Wie setzt sich die Auftriebskraft am Flächenfallschirm zusammen?", opts: ["50% Überdruck / 50% Unterdruck","2/3 Unterdruck / 1/3 Überdruck","1/3 Unterdruck / 2/3 Überdruck","Nur Überdruck"], correct: 1, explain: "2/3 Unterdruck (Sog) oben und 1/3 Überdruck unten." },
+  { q: "Was ist die Entscheidungshöhe für die Notprozedur?", opts: ["300 m/GND","400 m/GND","500 m/GND","600 m/GND"], correct: 2, explain: "500 m/GND ist die Entscheidungshöhe." },
+  { q: "Wer hat unter Fallschirmen grundsätzlich Vorfahrt?", opts: ["Der Schnellere","Der Obere","Der Untere","Der mit dem größeren Schirm"], correct: 2, explain: "Der Untere hat grundsätzlich Vorfahrt!" },
+  { q: "Ab welcher Höhe sind keine 360°-Drehungen mehr erlaubt?", opts: ["300 m/GND","400 m/GND","500 m/GND","600 m/GND"], correct: 2, explain: "Unter 500 m/GND keine 360°-Drehungen mehr." },
+  { q: "Ab welcher Höhe beginnt der Endanflug (Final)?", opts: ["200 m/GND","150 m/GND","100 m/GND","50 m/GND"], correct: 2, explain: "Ab 100 m/GND: gerader Endanflug." },
+  { q: "Was tust du bei einer DOWN-PLANE-Situation?", opts: ["Abwarten und pumpen","RSL lösen, Hauptschirm abtrennen","Reserve dazu ziehen","Steuerleine ziehen"], correct: 1, explain: "RSL lösen, schnell und auf jeden Fall Hauptschirm abtrennen!" },
+  { q: "Wie beginnt der Flare bei der Landung?", opts: ["Bei 10 m, volle Bremse","Bei 3–4 m halbe Bremse, dann bei 1,5 m volle Bremse","Bei 1 m halbe Bremse","Bei 5 m volle Bremse sofort"], correct: 1, explain: "Halbe Bremse bei 3–4 m (Schulter), dann volle Bremse bei ca. 1,5 m." },
+  { q: "Was ist die Faustformel für den Leebereich?", opts: ["Windstärke × 2","Hindernishöhe + Windstärke","Hindernishöhe × Windstärke (kn)","Windstärke ÷ Hindernishöhe"], correct: 2, explain: "Hindernishöhe × Windstärke (kn) = Leebereich." },
+  { q: "Was zählst du nach dem Werfen des Hand-Deploy?", opts: ["1 – 2 – 3 – los","1000 – 2000 – 3000 – Checktausend","eins – zwei – drei – check","Nichts, nur warten"], correct: 1, explain: "1000 – 2000 – 3000 – Checktausend, unter Beibehaltung der Box-Position." }
+];
+
+let quizScore = 0;
+let quizAnswered = 0;
+
+function renderQuiz() {
+  const container = document.getElementById('quiz-container');
+  container.innerHTML = '';
+  quizScore = 0; quizAnswered = 0;
+  document.getElementById('quiz-score-container').innerHTML = '';
+  
+  quizData.forEach((item, i) => {
+    const card = document.createElement('div');
+    card.className = 'quiz-card';
+    card.innerHTML = `
+      <div class="q-num">Frage ${i+1} / ${quizData.length}</div>
+      <div class="q-text">${item.q}</div>
+      <div class="quiz-options" id="opts-${i}">
+        ${item.opts.map((o, j) => `<button class="quiz-opt" onclick="answerQuiz(${i},${j})">${o}</button>`).join('')}
+      </div>
+      <div class="quiz-feedback" id="fb-${i}"></div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function answerQuiz(qi, oi) {
+  const opts = document.querySelectorAll(`#opts-${qi} .quiz-opt`);
+  const fb = document.getElementById(`fb-${qi}`);
+  const item = quizData[qi];
+  
+  if (opts[0].classList.contains('selected')) return;
+  
+  opts.forEach((o, j) => {
+    o.classList.add('selected');
+    if (j === item.correct) o.classList.add('correct');
+    if (j === oi && j !== item.correct) o.classList.add('wrong');
+  });
+  
+  const isCorrect = oi === item.correct;
+  if (isCorrect) quizScore++;
+  quizAnswered++;
+  
+  fb.className = `quiz-feedback show ${isCorrect ? 'correct-fb' : 'wrong-fb'}`;
+  fb.textContent = isCorrect ? `✓ Richtig! ${item.explain}` : `✗ Falsch. ${item.explain}`;
+  
+  if (quizAnswered === quizData.length) {
+    setTimeout(showScore, 500);
+  }
+}
+
+function showScore() {
+  const pct = Math.round(quizScore / quizData.length * 100);
+  document.getElementById('quiz-score-container').innerHTML = `
+    <div class="quiz-score">
+      <div class="big-score">${quizScore}/${quizData.length}</div>
+      <p style="color:var(--text-dim); margin:0.5rem 0;">${pct}% richtig – ${pct >= 80 ? 'Sehr gut! Du bist bereit! 🪂' : pct >= 60 ? 'Ganz okay – wiederhole die schwächeren Kapitel.' : 'Noch üben – geh die Kapitel nochmal durch!'}</p>
+      <button class="quiz-reset" onclick="renderQuiz()">Nochmal versuchen</button>
+    </div>
+  `;
+}
+
+// Initialize quiz on load
+renderQuiz();
+
+// Make cards clickable
+document.querySelectorAll('.card[onclick]').forEach(c => c.style.cursor = 'pointer');
+</script>
+</body>
+</html>
